@@ -31,31 +31,6 @@ const Sidebar = () => {
 		{link: "create", title: "Create", icon: <Plus />},
 	];
 
-	const handleLogOut = async () => {
-		// setLoad(true);
-		// try {
-		// 	const {success, message} = await logoutUser();
-		// 	success &&
-		// 		toaster.create({
-		// 			title: message,
-		// 			type: "info",
-		// 		});
-		// 	navigate("/login");
-		// } catch (error) {
-		// 	console.error(error);
-		// 	toaster.create({
-		// 		title: "An error occured",
-		// 		type: "error",
-		// 	});
-		// } finally {
-		// 	setTimeout(() => {
-		// 		setLoad(false);
-		// 	}, 2000);
-		// }
-
-		navigate("../login");
-	};
-
 	if (load) {
 		return (
 			<>
