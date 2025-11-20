@@ -5,6 +5,12 @@ import {generateNew, generateTokens, verifyToken} from "../utils/generateToken";
 
 export const register = async (req: Request, res: Response) => {
 	const {username, email, password} = req.body;
+	if (!username || !email || !password) {
+		return res
+			.status(400)
+			.json({message: "Username, email, and password are required"});
+	}
+
 	try {
 		const hashed = await bcrypt.hash(password, 10);
 		const user = await prisma.user.create({
@@ -20,6 +26,13 @@ export const register = async (req: Request, res: Response) => {
 
 export const login = async (req: Request, res: Response) => {
 	const {email, password} = req.body;
+
+	if (!email || !password) {
+		return res
+			.status(400)
+			.json({message: "email and password are required"});
+	}
+
 	try {
 		const user = await prisma.user.findUnique({where: {email}});
 		if (!user) return res.status(404).json({message: "User not found"});
@@ -31,6 +44,7 @@ export const login = async (req: Request, res: Response) => {
 		const tokens = await generateTokens(user.id);
 		res.json({user, ...tokens});
 	} catch (error) {
+		console.log(error);
 		res.status(500).json({message: "Error logging in", error});
 	}
 };

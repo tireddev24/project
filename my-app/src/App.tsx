@@ -10,6 +10,7 @@ import Feed from "./pages/feed";
 import Root from "./root";
 
 import {Search} from "@/components/ui/icons";
+import ProtectedRoute from "./auth/protected";
 import ActivityPage from "./pages/activitypage";
 import CreatePage from "./pages/createpage";
 import ExplorePage from "./pages/explorepage";
@@ -22,6 +23,7 @@ function App() {
 			<Box className=" bg-dark ">
 				<Container maxWidth="breakpoint-4xl">
 					<Routes>
+						{/* Public */}
 						<Route path="login" element={<Login />}>
 							<Route
 								path="forgot-password"
@@ -31,7 +33,14 @@ function App() {
 							</Route>
 						</Route>
 						<Route path="register" element={<Register />} />
-						<Route path="/" element={<Root />}>
+
+						<Route
+							path="/"
+							element={
+								<ProtectedRoute>
+									<Root />
+								</ProtectedRoute>
+							}>
 							<Route path="feed" element={<Feed />} />
 							<Route path="chat" element={<ChatPage />} />
 							<Route path="activity" element={<ActivityPage />} />
