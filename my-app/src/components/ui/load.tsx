@@ -1,22 +1,21 @@
-import { VStack } from "@chakra-ui/react";
+import {VStack} from "@chakra-ui/react";
 import Spin from "./spinner";
 
 const Loader = () => {
-  return (
-    <VStack
-      className="backdrop-brightness-25"
-      position={"absolute"}
-      top={0}
-      left={0}
-      minH={"100vh"}
-      minW={"full"}
-      justifyContent={"center"}
-    >
-      <div className="scale-150">
-        <Spin />
-      </div>
-    </VStack>
-  );
+	return (
+		<VStack
+			className=""
+			// position={"rea"}
+			top={0}
+			left={0}
+			minH={"100vh"}
+			minW={"full"}
+			justifyContent={"center"}>
+			<div className="">
+				<Spin />
+			</div>
+		</VStack>
+	);
 };
 
 export default Loader;

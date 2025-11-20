@@ -1,4 +1,5 @@
 import {Email, Google, IEyeClose, IEyeOpen} from "@/components/ui/icons";
+import {useAuth} from "@/hooks/useAuth";
 import {
 	Box,
 	Button,
@@ -11,7 +12,10 @@ import {
 } from "@chakra-ui/react";
 import {useState} from "react";
 import {IoLockClosedOutline} from "react-icons/io5";
-import {Link, Outlet, useLocation} from "react-router-dom";
+import {Link, Outlet, useLocation, useNavigate} from "react-router-dom";
+
+import Loader from "@/components/ui/load";
+import {toaster, Toaster} from "@/components/ui/toaster";
 
 const Login = () => {
 	const location = useLocation();
@@ -19,8 +23,45 @@ const Login = () => {
 
 	const [showPassword, setShowPassword] = useState(false);
 
+	const [loading, setLoading] = useState<boolean>(false);
+	const navigate = useNavigate();
+
+	const {login} = useAuth();
+
+	const [form, setForm] = useState({
+		email: "",
+		password: "",
+	});
+
+	const [error, setError] = useState("");
+
+	const handleChange = (e: any) => {
+		setForm({...form, [e.target.name]: e.target.value});
+	};
+
+	const handleSubmit = async () => {
+		setLoading(true);
+		setError("");
+
+		const {success, message} = await login(form);
+
+		toaster.create({
+			type: success ? "success" : "error",
+			title: success ? "success" : "Error",
+
+			description: success ? "Logged in" : message,
+		});
+
+		setLoading(false);
+
+		if (success) {
+			navigate("/feed");
+		}
+	};
+
 	return (
 		<div className="flex min-h-screen  justify-center items-center">
+			<Toaster />
 			<Flex className="*:min-h-[700px] *:min-w-[550px] ">
 				<div className="bg-primary w-[500px]"></div>
 				<Outlet />
@@ -47,7 +88,9 @@ const Login = () => {
 											placeholder="Email"
 											paddingLeft={10}
 											h={10}
+											name="email"
 											w={"full"}
+											onChange={handleChange}
 										/>
 									</HStack>
 								</div>
@@ -63,7 +106,14 @@ const Login = () => {
 											placeholder="Password"
 											paddingLeft={10}
 											h={10}
+											type={
+												showPassword
+													? "text"
+													: "password"
+											}
+											name="password"
 											w={"full"}
+											onChange={handleChange}
 										/>
 										<Button
 											onClick={() =>
@@ -75,7 +125,7 @@ const Login = () => {
 											right={0}
 											variant={"outline"}
 											fontSize={"20px"}>
-											{showPassword ? (
+											{!showPassword ? (
 												<IEyeOpen />
 											) : (
 												<IEyeClose />
@@ -94,8 +144,9 @@ const Login = () => {
 									bgColor={"f7d4e1"}
 									rounded={"2xl"}
 									padding={6}
-									marginBottom={8}>
-									Login
+									marginBottom={8}
+									onClick={() => handleSubmit()}>
+									{loading ? <Loader /> : "Login"}
 								</Button>
 							</form>
 
