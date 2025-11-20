@@ -11,7 +11,7 @@ interface PostCardProps {
 export default function PostCard({name, time, text, avatarUrl}: PostCardProps) {
 	return (
 		<Box shadow={"md"} rounded={"md"} p={2}>
-			<div className="w-fullbg-white p-4 rounded-lg border-2 flex flex-col gap-3">
+			<div className="w-full bg-white p-4 rounded-lg border-2 flex flex-col gap-3">
 				{/* Header */}
 				<Box padding={1} ring={2} ringColor={"gray.200"}>
 					<div className="flex justify-between items-start">

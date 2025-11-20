@@ -30,7 +30,7 @@ const Home = () => {
 	];
 
 	return (
-		<VStack padding={4} className="bg-white">
+		<VStack padding={4} className="bg-white w-[800px]">
 			<VStack overflowY={"scroll"} h={"11/12"}>
 				<HStack position={"relative"} marginBottom={"10"}>
 					<Avatar.Root

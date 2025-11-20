@@ -5,7 +5,16 @@ import ForgotPassword from "./auth/forgotpassword";
 import Login from "./auth/login";
 import Reset from "./auth/resetpassword";
 import VerifyCode from "./auth/verify";
-import Feed from "./home/feed";
+import ChatPage from "./pages/chatpage";
+import Feed from "./pages/feed";
+import Root from "./root";
+
+import {Search} from "@/components/ui/icons";
+import ActivityPage from "./pages/activitypage";
+import CreatePage from "./pages/createpage";
+import ExplorePage from "./pages/explorepage";
+import ProfilePage from "./pages/profilepage";
+<Search />;
 
 function App() {
 	return (
@@ -22,7 +31,14 @@ function App() {
 							</Route>
 						</Route>
 						<Route path="register" element={<Register />} />
-						<Route path="feed" element={<Feed />} />
+						<Route path="/" element={<Root />}>
+							<Route path="feed" element={<Feed />} />
+							<Route path="chat" element={<ChatPage />} />
+							<Route path="activity" element={<ActivityPage />} />
+							<Route path="profile" element={<ProfilePage />} />
+							<Route path="explore" element={<ExplorePage />} />
+							<Route path="create" element={<CreatePage />} />
+						</Route>
 					</Routes>
 				</Container>
 			</Box>
