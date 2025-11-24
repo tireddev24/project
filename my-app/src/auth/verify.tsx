@@ -14,7 +14,7 @@ export default function VerifyCode() {
 				<Heading
 					margin={10}
 					textTransform={"uppercase"}
-					fontSize={36}
+					fontSize={30}
 					fontWeight={"700"}>
 					Enter verification Code
 				</Heading>
@@ -23,55 +23,51 @@ export default function VerifyCode() {
 						Enter the code that has been sent to your mail
 					</Text>
 					<div>
-						<HStack>
+						<HStack justify={"center"}>
 							<Input
 								placeholder=""
-								h={20}
-								w={"20"}
+								h={16}
+								w={16}
 								maxLength={1}
 								fontSize={50}
 								fontWeight={"bold"}
 								textAlign={"center"}
 								borderColor={"black"}
 							/>
-
 							<Input
 								placeholder=""
-								h={20}
-								w={"20"}
+								h={16}
+								w={16}
 								maxLength={1}
 								fontSize={50}
 								fontWeight={"bold"}
 								textAlign={"center"}
 								borderColor={"black"}
-							/>
-
+							/>{" "}
 							<Input
 								placeholder=""
-								h={20}
-								w={"20"}
+								h={16}
+								w={16}
 								maxLength={1}
 								fontSize={50}
 								fontWeight={"bold"}
 								textAlign={"center"}
 								borderColor={"black"}
-							/>
-
+							/>{" "}
 							<Input
 								placeholder=""
-								h={20}
-								w={"20"}
+								h={16}
+								w={16}
 								maxLength={1}
 								fontSize={50}
 								fontWeight={"bold"}
 								textAlign={"center"}
 								borderColor={"black"}
-							/>
-
+							/>{" "}
 							<Input
 								placeholder=""
-								h={20}
-								w={"20"}
+								h={16}
+								w={16}
 								maxLength={1}
 								fontSize={50}
 								fontWeight={"bold"}

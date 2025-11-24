@@ -4,17 +4,17 @@ import prisma from "../config/db";
 import {generateNew, generateTokens, verifyToken} from "../utils/generateToken";
 
 export const register = async (req: Request, res: Response) => {
-	const {username, email, password} = req.body;
-	if (!username || !email || !password) {
+	const {username, email, password, lastname, firstname} = req.body;
+	if (!username || !email || !password || !lastname || firstname) {
 		return res
 			.status(400)
-			.json({message: "Username, email, and password are required"});
+			.json({message: "Some required fields are empty"});
 	}
 
 	try {
 		const hashed = await bcrypt.hash(password, 10);
 		const user = await prisma.user.create({
-			data: {username, email, password: hashed},
+			data: {username, email, firstname, lastname, password: hashed},
 		});
 
 		const tokens = await generateTokens(user.id);
@@ -40,6 +40,16 @@ export const login = async (req: Request, res: Response) => {
 		const valid = await bcrypt.compare(password, user.password);
 		if (!valid)
 			return res.status(401).json({message: "Invalid credentials"});
+
+		// record this login/session
+		await prisma.loginRecord.create({
+			data: {
+				userId: user.id,
+				ipAddress: (req.headers["x-forwarded-for"] as string) || req.ip,
+				userAgent: req.headers["user-agent"] ?? null,
+				success: true,
+			},
+		});
 
 		const tokens = await generateTokens(user.id);
 		res.json({user, ...tokens});
@@ -87,5 +97,30 @@ export const deleteUsers = async (req: Request, res: Response) => {
 		res.status(200).json({message: "User deleted successfully", user});
 	} catch (error) {
 		res.status(500).json({message: "Error deleting user", error});
+	}
+};
+
+export const resetPassword = async (req: Request, res: Response) => {
+	const {email, newPassword} = req.body;
+
+	if (!email || !newPassword) {
+		return res
+			.status(400)
+			.json({message: "Email and new password are required"});
+	}
+
+	try {
+		const user = await prisma.user.findUnique({where: {email}});
+		if (!user) return res.status(404).json({message: "User not found"});
+
+		const hashed = await bcrypt.hash(newPassword, 10);
+		const updatedUser = await prisma.user.update({
+			where: {email},
+			data: {password: hashed},
+		});
+
+		res.json({message: "Password reset successfully", user: updatedUser});
+	} catch (error) {
+		res.status(500).json({message: "Error resetting password", error});
 	}
 };

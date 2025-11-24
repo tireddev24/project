@@ -13,6 +13,8 @@ model User {
   id            String         @id @default(uuid())
   username      String         @unique
   email         String         @unique
+  firstname     String
+  lastname      String
   password      String
   avatarUrl     String?
   bio           String?
@@ -27,6 +29,7 @@ model User {
   updatedAt     DateTime       @updatedAt
   reports       Report[]
   refreshTokens RefreshToken[]
+  loginRecords  LoginRecord[]
 }
 
 model Post {
@@ -158,4 +161,28 @@ model RefreshToken {
   userId    String
   createdAt DateTime @default(now())
   expiresAt DateTime
+}
+
+enum LoginMethod {
+  PASSWORD
+  SSO
+  OAUTH
+  REFRESH_TOKEN
+  MAGIC_LINK
+}
+
+model LoginRecord {
+  id        String      @id @default(uuid())
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  ipAddress String?
+  userAgent String?
+  method    LoginMethod @default(PASSWORD)
+  success   Boolean     @default(true)
+  sessionId String? // optional session identifier
+  metadata  Json? // free-form details (e.g., device info, geo)
+  createdAt DateTime    @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
 }
