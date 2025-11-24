@@ -5,7 +5,7 @@ import {generateNew, generateTokens, verifyToken} from "../utils/generateToken";
 
 export const register = async (req: Request, res: Response) => {
 	const {username, email, password, lastname, firstname} = req.body;
-	if (!username || !email || !password || !lastname || firstname) {
+	if (!username || !email || !password || !lastname || !firstname) {
 		return res
 			.status(400)
 			.json({message: "Some required fields are empty"});
@@ -13,11 +13,31 @@ export const register = async (req: Request, res: Response) => {
 
 	try {
 		const hashed = await bcrypt.hash(password, 10);
+
+		const existing = await prisma.user.findFirst({
+			where: {
+				OR: [{email}, {username}],
+			},
+		});
+
+		if (existing) {
+			return res.status(409).json({
+				message: "User with that email or username already exists",
+			});
+		}
+
 		const user = await prisma.user.create({
 			data: {username, email, firstname, lastname, password: hashed},
 		});
 
 		const tokens = await generateTokens(user.id);
+
+		res.cookie("refreshToken", tokens.refreshToken, {
+			httpOnly: true,
+			secure: false, // true in production
+			sameSite: "none", // important if frontend and backend are on different ports!
+			maxAge: 30 * 24 * 60 * 60 * 1000,
+		});
 		res.status(201).json({user, ...tokens});
 	} catch (error) {
 		res.status(400).json({message: "Error registering user", error});
@@ -52,6 +72,14 @@ export const login = async (req: Request, res: Response) => {
 		});
 
 		const tokens = await generateTokens(user.id);
+
+		res.cookie("refreshToken", tokens.refreshToken, {
+			httpOnly: true,
+			secure: false, // true in production
+			sameSite: "none", // important if frontend and backend are on different ports!
+			maxAge: 30 * 24 * 60 * 60 * 1000,
+		});
+
 		res.json({user, ...tokens});
 	} catch (error) {
 		console.log(error);
@@ -60,7 +88,9 @@ export const login = async (req: Request, res: Response) => {
 };
 
 export const refreshAccessToken = async (req: Request, res: Response) => {
-	const {refreshToken} = req.body;
+	console.log(req);
+
+	const refreshToken = req.cookies.refreshToken;
 
 	if (!refreshToken)
 		return res.status(400).json({message: "No refresh token provided"});
@@ -79,6 +109,13 @@ export const refreshAccessToken = async (req: Request, res: Response) => {
 		const payload = verifyToken(refreshToken);
 
 		const newAccess = await generateNew(payload.userId);
+
+		res.cookie("refreshToken", refreshToken, {
+			httpOnly: true,
+			secure: false, // true in production
+			sameSite: "none", // important if frontend and backend are on different ports!
+			maxAge: 30 * 24 * 60 * 60 * 1000,
+		});
 
 		res.json({message: "Token generated", accessToken: newAccess});
 	} catch (err) {

@@ -18,3 +18,5 @@ createRoot(document.getElementById("root")!).render(
 		</BrowserRouter>
 	</StrictMode>,
 );
+
+// Error boundary component for handling non-existent routes

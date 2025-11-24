@@ -1,17 +1,13 @@
-import {useAuth} from "@/context/AuthContext";
 import axios from "axios";
-
-const API = axios.create({
-	baseURL: "http://localhost:5000/api",
-	withCredentials: true, // Update if backend URL changes
-});
+import {useAuth} from "./context/AuthContext";
 
 const api = axios.create({
 	baseURL: "http://localhost:5000/api",
-	withCredentials: true, // Update if backend URL changes
+	withCredentials: true, // enables refresh token cookie
 });
 
-API.interceptors.request.use((config) => {
+// This attaches the access token to each request
+api.interceptors.request.use((config) => {
 	const {accessToken} = useAuth();
 	if (accessToken) {
 		config.headers.Authorization = `Bearer ${accessToken}`;
@@ -20,7 +16,7 @@ API.interceptors.request.use((config) => {
 });
 
 // Auto refresh when access token expires
-API.interceptors.response.use(
+api.interceptors.response.use(
 	(res) => res,
 	async (error) => {
 		const originalReq = error.config;
@@ -42,7 +38,7 @@ API.interceptors.response.use(
 
 				originalReq.headers.Authorization = `Bearer ${accessToken}`;
 
-				return API(originalReq); // retry original request
+				return api(originalReq); // retry original request
 			} catch (refreshError) {
 				const {logout} = useAuth();
 				logout();
@@ -54,22 +50,4 @@ API.interceptors.response.use(
 	},
 );
 
-// REGISTER
-export const registerUser = async (data: {
-	firstname: string;
-	lastname: string;
-	username: string;
-	email: string;
-	password: string;
-}) => {
-	return await api.post("/auth/register", data);
-};
-
-// LOGIN
-export const loginUser = async (data: {email: string; password: string}) => {
-	return await api.post("/auth/login", data);
-};
-
-export const refreshToken = async () => {
-	return await api.post("/auth/refresh-token", {});
-};
+export default api;

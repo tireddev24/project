@@ -1,9 +1,12 @@
-import {AuthContext} from "@/context/AuthContext";
-import {useContext, useState} from "react";
+// import {AuthContext} from "@/context/AuthContext";
+import {useAuth} from "@/context/AuthContext";
+import {useState} from "react";
 import {loginUser, registerUser} from "../api/auth";
 
-export const useAuth = () => {
+export const useAuthHandler = () => {
 	const [loading, setLoading] = useState(false);
+
+	const {setAccessToken, setUser} = useAuth();
 
 	const register = async (data: any) => {
 		setLoading(true);
@@ -15,32 +18,35 @@ export const useAuth = () => {
 			setLoading(false);
 			return {
 				success: false,
-				message: err.response?.data?.message || "Error",
+				message: err.response?.data?.message || "Error creating user",
 			};
 		}
 	};
 
-	const {login: saveToken} = useContext(AuthContext);
-	// const [loading, setLoading] = useState(false);
-
-	const login = async (data: any) => {
+	const handleLogin = async (data: any) => {
 		setLoading(true);
+		console.log("logged");
+
 		try {
-			const res = await loginUser(data);
+			const res = await loginUser({
+				email: data.email,
+				password: data.password,
+			});
 
-			// Save token in global state
-			saveToken(res.data.accessToken);
+			setAccessToken(res.data.accessToken);
+			setUser(res.data.user);
+			localStorage.setItem("user", JSON.stringify(res.data.user));
 
-			setLoading(false);
 			return {success: true, data: res.data};
 		} catch (err: any) {
-			setLoading(false);
 			return {
 				success: false,
-				message: err.response?.data?.message || "Error",
+				message: err.response?.data?.message || "Error  posting",
 			};
+		} finally {
+			setLoading(false);
 		}
 	};
 
-	return {loading, register, login};
+	return {loading, register, handleLogin};
 };

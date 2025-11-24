@@ -1,40 +1,61 @@
-import React, {createContext, useState} from "react";
+import {refreshToken} from "@/api/auth";
+import {createContext, useContext, useEffect, useState} from "react";
 
 interface AuthContextType {
-	isAuthenticated: boolean;
+	user: any;
 	accessToken: string | null;
-	login: (token: string) => void;
+	loading: boolean;
+	setAccessToken: (t: string | null) => void;
+	setUser: (u: any) => void;
 	logout: () => void;
 }
 
-export const AuthContext = createContext<AuthContextType>({
-	isAuthenticated: false,
-	accessToken: null,
-	login: () => {},
-	logout: () => {},
-});
+const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({children}: {children: React.ReactNode}) => {
-	const [accessToken, setAccessToken] = useState<string | null>(
-		localStorage.getItem("accessToken"),
-	);
-
-	const login = (token: string) => {
-		setAccessToken(token);
-		localStorage.setItem("accessToken", token);
-	};
+	const [accessToken, setAccessToken] = useState<string | null>(null);
+	const [user, setUser] = useState<any>(null);
+	const [loading, setLoading] = useState(true);
 
 	const logout = () => {
 		setAccessToken(null);
-		localStorage.removeItem("accessToken");
+		setUser(null);
+		localStorage.removeItem("user");
 	};
 
-	const isAuthenticated = Boolean(accessToken);
+	useEffect(() => {
+		const init = async () => {
+			try {
+				console.log("app init");
+				const res = await refreshToken();
+				console.log(res);
+				setAccessToken(res.data.accessToken);
+			} catch {
+				logout();
+			}
+			setLoading(false);
+		};
+		init();
+	}, []);
+
+	useEffect(() => {
+		const savedUser = localStorage.getItem("user");
+		if (savedUser) setUser(JSON.parse(savedUser));
+	}, []);
 
 	return (
 		<AuthContext.Provider
-			value={{isAuthenticated, accessToken, login, logout}}>
+			value={{
+				user,
+				accessToken,
+				setAccessToken,
+				setUser,
+				logout,
+				loading,
+			}}>
 			{children}
 		</AuthContext.Provider>
 	);
 };
+
+export const useAuth = () => useContext(AuthContext)!;

@@ -1,5 +1,4 @@
 import {Email, Google, IEyeClose, IEyeOpen} from "@/components/ui/icons";
-import {useAuth} from "@/hooks/useAuth";
 import {
 	Box,
 	Button,
@@ -7,30 +6,50 @@ import {
 	Heading,
 	HStack,
 	Icon,
+	Image,
 	Input,
 	Text,
 } from "@chakra-ui/react";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {IoLockClosedOutline} from "react-icons/io5";
 import {Link, Outlet, useLocation, useNavigate} from "react-router-dom";
 
+import {refreshToken} from "@/api/auth";
 import Loader from "@/components/ui/load";
-import {toaster, Toaster} from "@/components/ui/toaster";
+import {Toaster, toaster} from "@/components/ui/toaster";
+import {useAuth} from "@/context/AuthContext";
+import {useAuthHandler} from "@/hooks/useAuth";
+import image from "../assets/bg.png";
 
 const Login = () => {
 	const location = useLocation();
 	const path = location.pathname;
+
+	const {handleLogin} = useAuthHandler();
 
 	const [showPassword, setShowPassword] = useState(false);
 
 	const [loading, setLoading] = useState<boolean>(false);
 	const navigate = useNavigate();
 
-	const {login} = useAuth();
-
 	const [form, setForm] = useState({
 		email: "",
 		password: "",
+	});
+
+	const {setAccessToken} = useAuth();
+
+	useEffect(() => {
+		const login = (e: any) => {
+			if (e.key === "Enter" && !form.password) {
+				handleSubmit();
+			}
+		};
+		window.addEventListener("keydown", handleSubmit);
+
+		return () => {
+			window.removeEventListener("keydown", handleSubmit);
+		};
 	});
 
 	const [error, setError] = useState("");
@@ -43,7 +62,11 @@ const Login = () => {
 		setLoading(true);
 		setError("");
 
-		const {success, message} = await login(form);
+		// const {success, message} = await login(form);
+
+		console.log("logged");
+
+		const {success, message} = await handleLogin(form);
 
 		toaster.create({
 			type: success ? "success" : "error",
@@ -54,6 +77,9 @@ const Login = () => {
 
 		setLoading(false);
 
+		const res1 = await refreshToken();
+		setAccessToken(res1.data.accessToken);
+
 		if (success) {
 			navigate("/feed");
 		}
@@ -62,8 +88,10 @@ const Login = () => {
 	return (
 		<div className="flex min-h-screen  justify-center items-center">
 			<Toaster />
-			<Flex className="*:min-h-[700px] *:min-w-[550px] ">
-				<div className="bg-primary w-[500px]"></div>
+			<Flex className="*:h-[700px] *:min-w-[550px] ">
+				<div className="bg-primary w-[500px] hidden lg:block">
+					<Image src={image} />
+				</div>
 				<Outlet />
 				{!path.includes("password") && (
 					<div className="bg-white w-[550px]">

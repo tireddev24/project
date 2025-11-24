@@ -1,7 +1,7 @@
 import {Email, Google, IEyeClose, IEyeOpen} from "@/components/ui/icons";
 import Loader from "@/components/ui/load";
 import {toaster, Toaster} from "@/components/ui/toaster";
-import {useAuth} from "@/hooks/useAuth";
+import {useAuthHandler} from "@/hooks/useAuth";
 import {
 	Box,
 	Button,
@@ -9,20 +9,22 @@ import {
 	Heading,
 	HStack,
 	Icon,
+	Image,
 	Input,
 	Text,
 } from "@chakra-ui/react";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {IoLockClosedOutline} from "react-icons/io5";
 import {LuUserRound} from "react-icons/lu";
 import {Link, useNavigate} from "react-router-dom";
+import image from "../assets/bg.png";
 
 export default function Register() {
 	const [showPassword, setShowPassword] = useState(false);
 	const [loading, setLoading] = useState<boolean>(false);
 	const navigate = useNavigate();
 
-	const {register} = useAuth();
+	const {register, handleLogin} = useAuthHandler();
 
 	const [form, setForm] = useState({
 		firstname: "",
@@ -30,6 +32,19 @@ export default function Register() {
 		email: "",
 		password: "",
 		username: "",
+	});
+
+	useEffect(() => {
+		const login = (e: any) => {
+			if (e.key === "Enter" && !form.password) {
+				handleSubmit();
+			}
+		};
+		window.addEventListener("keydown", login);
+
+		return () => {
+			window.removeEventListener("keydown", login);
+		};
 	});
 
 	const [error, setError] = useState("");
@@ -51,23 +66,25 @@ export default function Register() {
 			description: success ? "Account successfully created" : message,
 		});
 
-		setLoading(false);
-
 		if (success) {
+			await handleLogin(form);
+
 			navigate("/feed");
 		}
+
+		setLoading(false);
 	};
 
 	return (
-		<div className="flex min-h-screen  justify-center items-center">
+		<div className="flex min-h-screen justify-center items-center rounded-xl">
 			<Toaster />
-			<Flex className="*:min-h-[700px] *:min-w-[550px] ">
+			<Flex className="*:min-h-[700px] *:w-[550px]  ">
 				<div className="bg-white ">
 					<Box padding={10} textAlign={"center"}>
 						<Heading
 							margin={10}
 							textTransform={"uppercase"}
-							fontSize={36}
+							fontSize={30}
 							fontWeight={"700"}>
 							Create your account
 						</Heading>
@@ -214,7 +231,9 @@ export default function Register() {
 						</Text>
 					</Box>
 				</div>
-				<div className="bg-primary h-10 "></div>
+				<div className="bg-primary hidden lg:block ">
+					<Image src={image} objectFit={"cover"} />
+				</div>
 			</Flex>
 		</div>
 	);

@@ -1,17 +1,28 @@
-import {useContext, type JSX} from "react";
+import {Center, Spinner} from "@chakra-ui/react";
+import {type JSX} from "react";
 import {Navigate} from "react-router-dom";
-import {AuthContext} from "../context/AuthContext";
+import {useAuth} from "../context/AuthContext";
 
-interface Props {
-	children: JSX.Element;
-}
+const ProtectedRoute = ({children}: {children: JSX.Element}) => {
+	const {accessToken, loading} = useAuth();
 
-export default function ProtectedRoute({children}: Props) {
-	const {isAuthenticated} = useContext(AuthContext);
+	console.log(loading);
 
-	if (!isAuthenticated) {
+	// Wait while checking session
+	if (loading) {
+		return (
+			<Center h="100vh">
+				<Spinner size="lg" />
+			</Center>
+		);
+	}
+
+	// User not authenticated
+	if (!accessToken) {
 		return <Navigate to="/login" replace />;
 	}
 
 	return children;
-}
+};
+
+export default ProtectedRoute;

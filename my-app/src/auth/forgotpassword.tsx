@@ -32,7 +32,7 @@ export default function ForgotPassword() {
 	}
 
 	return (
-		<div className="bg-white  h-full items-center">
+		<div className="bg-white  items-center">
 			<Box padding={10} textAlign={"center"}>
 				<Heading
 					margin={10}
