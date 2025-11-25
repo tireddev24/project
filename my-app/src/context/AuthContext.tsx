@@ -21,15 +21,25 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
 		setAccessToken(null);
 		setUser(null);
 		localStorage.removeItem("user");
+		localStorage.removeItem("refreshToken");
+		localStorage.removeItem("accessToken");
 	};
+
+	const data = JSON.parse(localStorage.getItem("refreshToken") || "null");
 
 	useEffect(() => {
 		const init = async () => {
 			try {
 				console.log("app init");
-				const res = await refreshToken();
-				console.log(res);
-				setAccessToken(res.data.accessToken);
+				if (data) {
+					const res = await refreshToken({refreshToken: data});
+
+					setAccessToken(res.data.accessToken);
+					localStorage.setItem(
+						"accessToken",
+						JSON.stringify(res.data.accessToken),
+					);
+				}
 			} catch {
 				logout();
 			}

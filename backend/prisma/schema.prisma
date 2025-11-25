@@ -182,6 +182,7 @@ model LoginRecord {
   sessionId String? // optional session identifier
   metadata  Json? // free-form details (e.g., device info, geo)
   createdAt DateTime    @default(now())
+  token     String?
 
   @@index([userId])
   @@index([createdAt])

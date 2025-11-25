@@ -14,10 +14,8 @@ import {useEffect, useState} from "react";
 import {IoLockClosedOutline} from "react-icons/io5";
 import {Link, Outlet, useLocation, useNavigate} from "react-router-dom";
 
-import {refreshToken} from "@/api/auth";
 import Loader from "@/components/ui/load";
 import {Toaster, toaster} from "@/components/ui/toaster";
-import {useAuth} from "@/context/AuthContext";
 import {useAuthHandler} from "@/hooks/useAuth";
 import image from "../assets/bg.png";
 
@@ -37,32 +35,31 @@ const Login = () => {
 		password: "",
 	});
 
-	const {setAccessToken} = useAuth();
-
 	useEffect(() => {
 		const login = (e: any) => {
 			if (e.key === "Enter" && !form.password) {
 				handleSubmit();
 			}
 		};
-		window.addEventListener("keydown", handleSubmit);
+		window.addEventListener("keydown", login);
 
 		return () => {
-			window.removeEventListener("keydown", handleSubmit);
+			window.removeEventListener("keydown", login);
 		};
 	});
 
 	const [error, setError] = useState("");
 
 	const handleChange = (e: any) => {
-		setForm({...form, [e.target.name]: e.target.value});
+		setForm({
+			...form,
+			[e.target.name]: e.target.value,
+		});
 	};
 
 	const handleSubmit = async () => {
 		setLoading(true);
 		setError("");
-
-		// const {success, message} = await login(form);
 
 		console.log("logged");
 
@@ -76,9 +73,6 @@ const Login = () => {
 		});
 
 		setLoading(false);
-
-		const res1 = await refreshToken();
-		setAccessToken(res1.data.accessToken);
 
 		if (success) {
 			navigate("/feed");

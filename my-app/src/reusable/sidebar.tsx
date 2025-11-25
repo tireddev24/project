@@ -8,19 +8,29 @@ import {
 } from "@/components/ui/icons";
 import {Box, Heading, HStack} from "@chakra-ui/react";
 import {NavLink, useLocation, useNavigate} from "react-router-dom";
-// import Topbar from "./reusable/topbar";
 
-// import useLogout from "@/hooks/useLogout";
+import {useAuth} from "@/context/AuthContext";
 import {useState} from "react";
+import {IoLogOut} from "react-icons/io5";
 import Loader from "../components/ui/load";
-import {Toaster} from "../components/ui/toaster";
+import {toaster, Toaster} from "../components/ui/toaster";
 
 const Sidebar = () => {
 	const location = useLocation();
 	const navigate = useNavigate();
-	// const {logoutUser} = useLogout();
 	const [load, setLoad] = useState<boolean>(false);
 	const path = location.pathname;
+
+	const logout = useAuth();
+
+	const handleLogout = () => {
+		toaster.create({
+			type: "info",
+			description: "Logging out",
+		});
+
+		logout.logout();
+	};
 
 	const links = [
 		{link: "feed", title: "Feed", icon: <IDashboard />},
@@ -29,6 +39,12 @@ const Sidebar = () => {
 		{link: "explore", title: "Explore", icon: <Search />},
 		{link: "profile", title: "Profile", icon: <User />},
 		{link: "create", title: "Create", icon: <Plus />},
+		{
+			link: "/login",
+			title: "Logout",
+			icon: <IoLogOut />,
+			action: handleLogout,
+		},
 	];
 
 	if (load) {
@@ -42,6 +58,7 @@ const Sidebar = () => {
 
 	return (
 		<Box fontSize={"28px"} p={10}>
+			<Toaster />
 			<Heading textTransform={"uppercase"} color={"danger"}>
 				LOGO
 			</Heading>

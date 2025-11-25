@@ -18,6 +18,7 @@ export const authMiddleware = (
 	}
 
 	const token = authHeader.split(" ")[1];
+	console.log(token);
 
 	try {
 		jwt.verify(token, process.env.JWT_SECRET as string, (err, decoded) => {

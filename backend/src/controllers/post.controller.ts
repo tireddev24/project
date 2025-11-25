@@ -6,6 +6,12 @@ export const createPost = async (req: Request, res: Response) => {
 	try {
 		const {caption, quote, imageUrl, moodCategory, tags} = req.body;
 
+		if (!caption || !moodCategory || !tags) {
+			return res
+				.status(400)
+				.json({message: "Some required fields are empty"});
+		}
+
 		const post = await prisma.post.create({
 			data: {
 				caption,

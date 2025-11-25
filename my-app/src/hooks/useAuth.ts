@@ -36,6 +36,14 @@ export const useAuthHandler = () => {
 			setAccessToken(res.data.accessToken);
 			setUser(res.data.user);
 			localStorage.setItem("user", JSON.stringify(res.data.user));
+			localStorage.setItem(
+				"accessToken",
+				JSON.stringify(res.data.accessToken),
+			);
+			localStorage.setItem(
+				"refreshToken",
+				JSON.stringify(res.data.refreshToken),
+			);
 
 			return {success: true, data: res.data};
 		} catch (err: any) {

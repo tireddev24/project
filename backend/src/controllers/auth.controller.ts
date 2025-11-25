@@ -61,17 +61,18 @@ export const login = async (req: Request, res: Response) => {
 		if (!valid)
 			return res.status(401).json({message: "Invalid credentials"});
 
+		const tokens = await generateTokens(user.id);
+
 		// record this login/session
 		await prisma.loginRecord.create({
 			data: {
 				userId: user.id,
+				token: tokens.accessToken,
 				ipAddress: (req.headers["x-forwarded-for"] as string) || req.ip,
 				userAgent: req.headers["user-agent"] ?? null,
 				success: true,
 			},
 		});
-
-		const tokens = await generateTokens(user.id);
 
 		res.cookie("refreshToken", tokens.refreshToken, {
 			httpOnly: true,
@@ -88,9 +89,8 @@ export const login = async (req: Request, res: Response) => {
 };
 
 export const refreshAccessToken = async (req: Request, res: Response) => {
-	console.log(req);
-
-	const refreshToken = req.cookies.refreshToken;
+	const refreshToken = req.body.refreshToken;
+	console.log(refreshToken);
 
 	if (!refreshToken)
 		return res.status(400).json({message: "No refresh token provided"});

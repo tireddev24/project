@@ -1,4 +1,5 @@
-import {Avatar, Box, Button, Icon, Text} from "@chakra-ui/react";
+import Timedate from "@/reusable/timedate";
+import {Avatar, Box, Button, HStack, Icon, Text} from "@chakra-ui/react";
 import {BsThreeDots} from "react-icons/bs";
 
 interface PostCardProps {
@@ -6,12 +7,21 @@ interface PostCardProps {
 	time: string;
 	text: string;
 	avatarUrl: string;
+	tags: any;
+	moodCategory?: string;
 }
 
-export default function PostCard({name, time, text, avatarUrl}: PostCardProps) {
+export default function PostCard({
+	name,
+	time,
+	text,
+	avatarUrl,
+	moodCategory,
+	tags,
+}: PostCardProps) {
 	return (
 		<Box shadow={"md"} rounded={"md"} p={2}>
-			<div className="w-full bg-white p-4 rounded-lg border-2 flex flex-col gap-3">
+			<div className="w-[550px] bg-white p-4 rounded-lg border-2 flex flex-col gap-3">
 				{/* Header */}
 				<Box padding={1} ring={2} ringColor={"gray.200"}>
 					<div className="flex justify-between items-start">
@@ -26,7 +36,7 @@ export default function PostCard({name, time, text, avatarUrl}: PostCardProps) {
 									{name}
 								</span>
 								<span className="text-sm text-gray-500">
-									{time}
+									<Timedate date={time} />
 								</span>
 							</div>
 						</div>
@@ -36,7 +46,7 @@ export default function PostCard({name, time, text, avatarUrl}: PostCardProps) {
 								variant="ghost"
 								size="sm"
 								className="text-gray-600 font-medium hover:text-gray-900">
-								Subscribe
+								{moodCategory || "Mood"}
 							</Button>
 
 							<Icon>{<BsThreeDots />}</Icon>
@@ -46,6 +56,15 @@ export default function PostCard({name, time, text, avatarUrl}: PostCardProps) {
 					{/* Post Text */}
 					<Text p={2} marginLeft={0} w={"full"}>
 						<p className="text-gray-700 text-[15px] ">{text}</p>
+						<HStack mt={2}>
+							{tags.map((tag: any, key: any) => (
+								<span
+									key={key}
+									className="text-gray-400 text-[10px] ">
+									#{tag.tag.name}
+								</span>
+							))}
+						</HStack>
 					</Text>
 				</Box>
 			</div>

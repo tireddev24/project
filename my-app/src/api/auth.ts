@@ -1,7 +1,7 @@
 import {useAuth} from "@/context/AuthContext";
 import axios from "axios";
 
-const API = axios.create({
+export const API = axios.create({
 	baseURL: "http://localhost:5000/api",
 	withCredentials: true, // Update if backend URL changes
 });
@@ -70,6 +70,12 @@ export const loginUser = async (data: {email: string; password: string}) => {
 	return await api.post("/auth/login", data);
 };
 
-export const refreshToken = async () => {
-	return await api.post("/auth/refresh-token", {});
+export const refreshToken = async (data: {refreshToken: string}) => {
+	return await api.post("/auth/refresh-token", data);
+};
+
+export const createPost = async (formData: {formData: any}) => {
+	return await API.post("/posts", formData, {
+		headers: {"Content-Type": "application/json"},
+	});
 };
