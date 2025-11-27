@@ -3,7 +3,6 @@ import {Avatar} from "@chakra-ui/react";
 const AvatarCard = ({
 	user,
 	position,
-	size,
 }: {
 	user: any;
 	position?: string;

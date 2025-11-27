@@ -7,18 +7,14 @@ import {
 	User,
 } from "@/components/ui/icons";
 import {HStack} from "@chakra-ui/react";
-import {NavLink, useLocation, useNavigate} from "react-router-dom";
+import {NavLink, useLocation} from "react-router-dom";
 
 import {useAuth} from "@/context/AuthContext";
-import {useState} from "react";
 import {IoLogOut} from "react-icons/io5";
-import Loader from "../components/ui/load";
-import {toaster, Toaster} from "../components/ui/toaster";
+import {toaster} from "../components/ui/toaster";
 
 const Sidebar = () => {
 	const location = useLocation();
-	const navigate = useNavigate();
-	const [load, setLoad] = useState<boolean>(false);
 	const path = location.pathname;
 
 	const logout = useAuth();
@@ -46,15 +42,6 @@ const Sidebar = () => {
 			action: handleLogout,
 		},
 	];
-
-	if (load) {
-		return (
-			<>
-				<Toaster />
-				<Loader />;
-			</>
-		);
-	}
 
 	return (
 		<>

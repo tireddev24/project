@@ -1,5 +1,4 @@
 import {Box, Flex, HStack, Icon, Input, Text, VStack} from "@chakra-ui/react";
-import {useState} from "react";
 import {Search} from "../ui/icons";
 import ChatCard from "./chatcard";
 
@@ -31,7 +30,9 @@ const Chat = () => {
 		},
 	];
 
-	const [messages, setMessages] = useState(0);
+	// const [messages, setMessages] = useState(0);
+
+	const messages = 0;
 
 	return (
 		<VStack padding={4} bg={"white"}>

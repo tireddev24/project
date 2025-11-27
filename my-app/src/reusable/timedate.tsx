@@ -33,6 +33,11 @@ function Timedate({date}: {date: string}) {
 		return () => clearInterval(intervalId);
 	}, [time]);
 
+	if (time == null) {
+		console.error(renderTime);
+		console.error(date);
+	}
+
 	return (
 		<HStack>
 			<Text>{renderDate}</Text>

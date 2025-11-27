@@ -1,15 +1,15 @@
 import {HStack, Input, VStack} from "@chakra-ui/react";
 import PostCard from "./postcard";
 
-interface HomeProps {
-	id: string;
-	firstname: string;
-	lastname: string;
-	username: string;
-	email: string;
-	createdAt: string;
-	updatedAt: string;
-}
+// interface HomeProps {
+// 	id: string;
+// 	firstname: string;
+// 	lastname: string;
+// 	username: string;
+// 	email: string;
+// 	createdAt: string;
+// 	updatedAt: string;
+// }
 
 import {useAuth} from "@/context/AuthContext";
 import AvatarCard from "@/reusable/avatarcard";
@@ -17,10 +17,10 @@ import {useLikeStore, usePostStore} from "@/store/store";
 import {useEffect, useState} from "react";
 import Spin from "../ui/spinner";
 
-const Home = (user: any) => {
+const Home = () => {
 	const {posts, fetchPosts} = usePostStore();
 
-	const {likes, fetchAllLikes} = useLikeStore();
+	const {fetchAllLikes} = useLikeStore();
 
 	const {user: user1} = useAuth();
 

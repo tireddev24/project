@@ -25,17 +25,18 @@ export default function PostCard({
 	avatarUrl,
 	moodCategory,
 	tags,
-	liked,
+	liked = false,
 }: PostCardProps) {
-	const {likes, fetchLikes} = useLikeStore();
+	const {fetchLikes} = useLikeStore();
 
 	useEffect(() => {
 		const data = async () => {
 			try {
-				const res = await fetchLikes(id);
+				await fetchLikes(id);
 				// console.log(likes);
 			} catch (error) {
 				console.error(error);
+				console.error(liked);
 			} finally {
 				// setLoad(false);
 			}

@@ -16,6 +16,7 @@ import {Link, Outlet, useLocation, useNavigate} from "react-router-dom";
 
 import Loader from "@/components/ui/load";
 import {Toaster, toaster} from "@/components/ui/toaster";
+import Nopage from "@/error/nopage";
 import {useAuthHandler} from "@/hooks/useAuth";
 import image from "../assets/bg.png";
 
@@ -78,6 +79,10 @@ const Login = () => {
 			navigate("/feed");
 		}
 	};
+
+	if (error) {
+		return <Nopage />;
+	}
 
 	return (
 		<div className="flex min-h-screen  justify-center items-center">

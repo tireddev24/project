@@ -179,7 +179,7 @@ export const usePostStore = create<PostState>((set, get) => ({
 	},
 
 	addComment: async (postId, text) => {
-		const res = await api.post(`/posts/${postId}/comments`, {text});
+		await api.post(`/posts/${postId}/comments`, {text});
 		set({
 			posts: get().posts.map((p) =>
 				p.id === postId ? {...p, comments: p.comments + 1} : p,
@@ -192,7 +192,7 @@ export const usePostStore = create<PostState>((set, get) => ({
 	},
 }));
 
-export const useLikeStore = create<LikeState>((set, get) => ({
+export const useLikeStore = create<LikeState>((set) => ({
 	likes: [],
 	loading: false,
 

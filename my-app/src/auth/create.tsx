@@ -1,6 +1,7 @@
 import {Email, Google, IEyeClose, IEyeOpen} from "@/components/ui/icons";
 import Loader from "@/components/ui/load";
 import {toaster, Toaster} from "@/components/ui/toaster";
+import Nopage from "@/error/nopage";
 import {useAuthHandler} from "@/hooks/useAuth";
 import {
 	Box,
@@ -74,6 +75,10 @@ export default function Register() {
 
 		setLoading(false);
 	};
+
+	if (error) {
+		return <Nopage />;
+	}
 
 	return (
 		<div className="flex min-h-screen justify-center items-center rounded-xl">
