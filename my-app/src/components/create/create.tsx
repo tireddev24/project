@@ -89,10 +89,14 @@ const Create = () => {
 	};
 
 	return (
-		<VStack h={"full"} alignItems={"center"} justifyContent={"center"}>
+		<VStack
+			h={"full"}
+			alignItems={"center"}
+			overflow={"hidden"}
+			justifyContent={"center"}>
 			<Toaster />
 			<Heading>Create New Post</Heading>
-			<form>
+			<form className="w-[400px]">
 				<VStack spaceY={6}>
 					{/* Caption */}
 					<Field.Root required>

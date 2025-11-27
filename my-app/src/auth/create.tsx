@@ -1,8 +1,8 @@
-import { Email, IEyeClose, IEyeOpen } from "@/components/ui/icons";
+import {Email, IEyeClose, IEyeOpen} from "@/components/ui/icons";
 import Loader from "@/components/ui/load";
-import { toaster, Toaster } from "@/components/ui/toaster";
+import {toaster, Toaster} from "@/components/ui/toaster";
 import Nopage from "@/error/nopage";
-import { useAuthHandler } from "@/hooks/useAuth";
+import {useAuthHandler} from "@/hooks/useAuth";
 import {
 	Box,
 	Button,
@@ -14,10 +14,10 @@ import {
 	Input,
 	Text,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { IoLockClosedOutline } from "react-icons/io5";
-import { LuUserRound } from "react-icons/lu";
-import { Link, useNavigate } from "react-router-dom";
+import {useEffect, useState} from "react";
+import {IoLockClosedOutline} from "react-icons/io5";
+import {LuUserRound} from "react-icons/lu";
+import {Link, useNavigate} from "react-router-dom";
 import image from "../assets/bg.png";
 
 export default function Register() {

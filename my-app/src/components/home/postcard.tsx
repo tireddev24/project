@@ -15,6 +15,7 @@ interface PostCardProps {
 	tags: any;
 	moodCategory?: string;
 	liked: boolean;
+	likes: [];
 }
 
 export default function PostCard({
@@ -26,6 +27,7 @@ export default function PostCard({
 	moodCategory,
 	tags,
 	liked = false,
+	likes,
 }: PostCardProps) {
 	const {fetchLikes} = useLikeStore();
 
@@ -43,14 +45,16 @@ export default function PostCard({
 		};
 		setTimeout(() => {
 			data();
-		}, 300);
+		}, 100);
 	}, []);
 
-	const [like, setLike] = useState(false);
+	const [like, setLike] = useState(likes.length > 0);
 
 	// console.log(likes);
 
 	// const {likePost, posts} = usePostStore();
+
+	console.log("Length " + likes.length);
 
 	const handleLike = async () => {
 		// const {success, message} = await likePost(id);
@@ -66,7 +70,7 @@ export default function PostCard({
 	};
 
 	const handleUnlike = async () => {
-		// const {success, message} = await likePost(id);
+		// const {success, message} = await unlikePost(id);
 
 		// success &&
 		setLike((prev) => !prev);
@@ -132,7 +136,9 @@ export default function PostCard({
 					variant={"ghost"}
 					onClick={like ? handleUnlike : handleLike}>
 					{like ? (
-						<HeartFilled fill="#f7d4e1" />
+						<>
+							<HeartFilled fill="#f7d4e1" /> {likes.length}
+						</>
 					) : (
 						<Heart fill="#f7d4e1" />
 					)}

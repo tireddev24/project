@@ -1,4 +1,4 @@
-import {HStack, Input, VStack} from "@chakra-ui/react";
+import {HStack, Input, Text, VStack} from "@chakra-ui/react";
 import PostCard from "./postcard";
 
 // interface HomeProps {
@@ -33,21 +33,15 @@ const Home = () => {
 	useEffect(() => {
 		const data = async () => {
 			try {
-				const res = await fetchPosts();
+				await fetchPosts();
 				await fetchAllLikes();
-
-				if ("res" in res) {
-					console.log(posts);
-				}
 			} catch (error) {
 				console.error(error);
 			} finally {
 				setLoad(false);
 			}
 		};
-		// setTimeout(() => {
 		data();
-		// }, 300);
 	}, []);
 
 	if (Load) {
@@ -81,13 +75,19 @@ const Home = () => {
 				</HStack>
 				{/* <div className="max-h-100 overflow-y-scroll"> */}
 				<VStack spaceY={4}>
+					{posts.length === 0 && (
+						<Text fontSize="lg" color="gray.500" mt={10}>
+							There are no posts at this time.
+						</Text>
+					)}
+
 					{posts.map((post, key) => {
 						// console.log(post.id);
 						// console.log(post.likes.includes(user1.id));
 						// post.likes.map((p) => {
 						// 	p.id === p
 						// });
-
+						// if (post.likes.some((like) => like.id === user1.id)) {}
 						return (
 							<PostCard
 								key={key}
@@ -99,6 +99,7 @@ const Home = () => {
 								moodCategory={post.moodCategory}
 								tags={post.tags!}
 								liked={true}
+								likes={post.likes}
 							/>
 						);
 					})}

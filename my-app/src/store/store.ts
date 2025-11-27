@@ -29,14 +29,7 @@ export interface Post {
 		username: string;
 		avatar?: string;
 	};
-	likes: [
-		{
-			id: string;
-			postId: string;
-			userId: string;
-			createdAt: string;
-		},
-	];
+	likes: any;
 	comments: number;
 }
 
@@ -149,7 +142,7 @@ export const usePostStore = create<PostState>((set, get) => ({
 		console.log(token);
 
 		const res = await fetch(`${uri}/posts/${postId}/unlike`, {
-			method: "POST",
+			method: "DELETE",
 			credentials: "include",
 			headers: {
 				"Content-Type": "application/json",
