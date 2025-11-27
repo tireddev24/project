@@ -1,13 +1,15 @@
 import {useAuth} from "@/context/AuthContext";
 import axios from "axios";
 
+import {SERVER_URI} from "@/utils/secrets";
+
 export const API = axios.create({
-	baseURL: "http://localhost:5000/api",
+	baseURL: `${SERVER_URI}/api`,
 	withCredentials: true, // Update if backend URL changes
 });
 
 const api = axios.create({
-	baseURL: "http://localhost:5000/api",
+	baseURL: `${SERVER_URI}/api`,
 	withCredentials: true, // Update if backend URL changes
 });
 
@@ -30,7 +32,7 @@ API.interceptors.response.use(
 			originalReq._retry = true;
 			try {
 				const refreshRes = await axios.post(
-					"http://localhost:5000/api/auth/refresh-token",
+					`${SERVER_URI}/api/auth/refresh-token`,
 					{},
 					{withCredentials: true},
 				);

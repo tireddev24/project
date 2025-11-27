@@ -1,4 +1,4 @@
-import {Email, Google, IEyeClose, IEyeOpen} from "@/components/ui/icons";
+import {Email, IEyeClose, IEyeOpen} from "@/components/ui/icons";
 import {
 	Box,
 	Button,
@@ -177,7 +177,7 @@ const Login = () => {
 								</Button>
 							</form>
 
-							<div className="flex items-center my-8">
+							{/* <div className="flex items-center my-8">
 								<div className="grow h-px bg-gray-300" />
 								<span className="px-4 text-gray-700">
 									<b>or login with</b>
@@ -189,7 +189,7 @@ const Login = () => {
 								<Icon m={8} fontSize={"50px"}>
 									<Google />
 								</Icon>
-							</Link>
+							</Link> */}
 
 							<Text>
 								Not registered yet?{"  "}
