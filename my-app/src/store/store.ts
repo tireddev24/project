@@ -1,13 +1,14 @@
 import type {CreatePost} from "@/types/types";
+import {SERVER_URI} from "@/utils/secrets";
 import axios from "axios";
 import {create} from "zustand";
 
-const uri = "http://localhost:5000/api";
+const uri = `${SERVER_URI}/api`;
 
-const token = localStorage.getItem("accessToken") || "";
+const token = sessionStorage.getItem("accessToken") || "";
 
 const api = axios.create({
-	baseURL: "http://localhost:5000/api",
+	baseURL: `${SERVER_URI}/api`,
 	withCredentials: true, // enables refresh token cookie
 	headers: {
 		"Content-Type": "application/json",
@@ -28,7 +29,14 @@ export interface Post {
 		username: string;
 		avatar?: string;
 	};
-	likes: number;
+	likes: [
+		{
+			id: string;
+			postId: string;
+			userId: string;
+			createdAt: string;
+		},
+	];
 	comments: number;
 }
 
@@ -40,9 +48,22 @@ interface PostState {
 	createPost: (
 		data: CreatePost,
 	) => Promise<{success: boolean; message: string}>;
-	likePost: (postId: string) => Promise<void>;
+	likePost: (postId: string) => Promise<{success: boolean; message: string}>;
+	unlikePost: (
+		postId: string,
+	) => Promise<{success: boolean; message: string}>;
 	addComment: (postId: string, text: string) => Promise<void>;
 	savePost: (postId: string) => Promise<void>;
+}
+
+interface LikeState {
+	likes: Post[];
+	loading: boolean;
+
+	fetchLikes: (
+		postId: string,
+	) => Promise<{success: boolean; likesCount: number}>;
+	fetchAllLikes: () => Promise<{success: boolean; likesCount: number}>;
 }
 
 export const usePostStore = create<PostState>((set, get) => ({
@@ -58,7 +79,7 @@ export const usePostStore = create<PostState>((set, get) => ({
 	},
 
 	createPost: async (formData) => {
-		const token = JSON.parse(localStorage.getItem("accessToken") || "");
+		const token = JSON.parse(sessionStorage.getItem("accessToken") || "");
 
 		console.log(token);
 
@@ -88,12 +109,73 @@ export const usePostStore = create<PostState>((set, get) => ({
 	},
 
 	likePost: async (postId) => {
-		const res = await api.post(`/posts/${postId}/like`);
+		const token = JSON.parse(sessionStorage.getItem("accessToken") || "");
+
+		// console.log(token);
+
+		const res = await fetch(`${uri}/posts/${postId}/like`, {
+			method: "POST",
+			credentials: "include",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${token}`,
+			},
+		});
+
+		const data = await res.json();
+
+		if (res.status == 401) {
+			return {success: false, message: "Token expired"};
+		}
+
+		if (res.status == 400) {
+			return {success: false, message: data.message};
+		}
+
+		console.log(data);
+
 		set({
 			posts: get().posts.map((p) =>
-				p.id === postId ? {...p, likes: res.data.likes} : p,
+				p.id === postId ? {...p, likes: data.like} : p,
 			),
 		});
+
+		return {success: true, message: data.message};
+	},
+
+	unlikePost: async (postId) => {
+		const token = JSON.parse(sessionStorage.getItem("accessToken") || "");
+
+		console.log(token);
+
+		const res = await fetch(`${uri}/posts/${postId}/unlike`, {
+			method: "POST",
+			credentials: "include",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${token}`,
+			},
+		});
+
+		const data = await res.json();
+
+		if (res.status == 401) {
+			return {success: false, message: "Token expired"};
+		}
+
+		if (res.status == 400) {
+			return {success: false, message: data.message};
+		}
+
+		console.log(data);
+
+		set({
+			posts: get().posts.filter((p) =>
+				p.id === postId ? {...p, likes: data.like} : p,
+			),
+		});
+
+		return {success: true, message: data.message};
 	},
 
 	addComment: async (postId, text) => {
@@ -107,5 +189,50 @@ export const usePostStore = create<PostState>((set, get) => ({
 
 	savePost: async (postId) => {
 		await api.post(`/posts/${postId}/save`);
+	},
+}));
+
+export const useLikeStore = create<LikeState>((set, get) => ({
+	likes: [],
+	loading: false,
+
+	fetchLikes: async (postId: string) => {
+		set({loading: true});
+
+		const res = await fetch(`${uri}/posts/${postId}/likes`, {
+			method: "GET",
+			credentials: "include",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${token}`,
+			},
+		});
+
+		const data = await res.json();
+
+		set({likes: data.likes, loading: false});
+
+		return {success: true, likesCount: data.likesCount};
+	},
+
+	fetchAllLikes: async () => {
+		set({loading: true});
+
+		const token = JSON.parse(sessionStorage.getItem("accessToken") || "");
+
+		const res = await fetch(`${uri}/posts/likes/all`, {
+			method: "GET",
+			credentials: "include",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${token}`,
+			},
+		});
+
+		const data = await res.json();
+
+		set({likes: data.likes, loading: false});
+
+		return {success: true, likesCount: data.likesCount};
 	},
 }));

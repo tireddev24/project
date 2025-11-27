@@ -22,10 +22,12 @@ import {Toaster, toaster} from "../ui/toaster";
 const Create = () => {
 	const {createPost: newPost} = usePostStore();
 
+	const [loading, setLoading] = useState(false);
+
 	const navigate = useNavigate();
 
 	const [formData, setFormData] = useState<CreatePost>({
-		quote: "",
+		quote: "default for now",
 		caption: "",
 		moodCategory: "",
 		imageUrl: "",
@@ -64,6 +66,8 @@ const Create = () => {
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 
+		setLoading(true);
+
 		const res = await newPost(formData);
 
 		toaster.create({
@@ -72,12 +76,11 @@ const Create = () => {
 			description: res.message,
 		});
 
+		setLoading(false);
 		res.success && navigate("/feed");
 
-		console.log("Creating post:", formData);
-
 		setFormData({
-			quote: "",
+			quote: "default for now",
 			caption: "",
 			moodCategory: "",
 			imageUrl: "",
@@ -105,7 +108,7 @@ const Create = () => {
 					</Field.Root>
 
 					{/* Quote */}
-					<Field.Root>
+					{/* <Field.Root>
 						<Field.Label fontWeight="bold">Quote</Field.Label>
 						<Textarea
 							name="quote"
@@ -115,7 +118,7 @@ const Create = () => {
 							minH="80px"
 							resize="vertical"
 						/>
-					</Field.Root>
+					</Field.Root> */}
 
 					{/* Mood Category */}
 					<Field.Root required>
@@ -195,12 +198,13 @@ const Create = () => {
 					{/* Submit Button */}
 					<Button
 						type="submit"
-						colorScheme="green"
+						colorPalette={"black"}
+						variant={"subtle"}
 						width="full"
 						size="lg"
 						fontWeight="bold"
 						onClick={handleSubmit}>
-						Create Post
+						{loading ? "Creating..." : "Create Post"}
 					</Button>
 				</VStack>
 			</form>

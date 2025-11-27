@@ -1,6 +1,4 @@
-import Spin from "@/components/ui/spinner";
 import {useAuth} from "@/context/AuthContext";
-import {VStack} from "@chakra-ui/react";
 import {useEffect, useState} from "react";
 import Home from "../components/home/home";
 
@@ -26,24 +24,24 @@ const Feed = () => {
 		}, 300);
 	}, []);
 
-	if (load) {
-		return (
-			<VStack
-				className="backdrop-brightness-50"
-				position={"absolute"}
-				left={0}
-				top={2}
-				h={"full"}
-				minH={"100vh"}
-				minW={"full"}
-				justifyContent={"center"}>
-				<div className="scale-150">
-					{/* <Toaster /> */}
-					<Spin />
-				</div>
-			</VStack>
-		);
-	}
+	// if (load) {
+	// 	return (
+	// 		<VStack
+	// 			className="backdrop-brightness-50"
+	// 			position={"absolute"}
+	// 			left={0}
+	// 			top={2}
+	// 			h={"full"}
+	// 			minH={"100vh"}
+	// 			minW={"full"}
+	// 			justifyContent={"center"}>
+	// 			<div className="scale-150">
+	// 				{/* <Toaster /> */}
+	// 				<Spin />
+	// 			</div>
+	// 		</VStack>
+	// 	);
+	// }
 
 	return (
 		<div className="">

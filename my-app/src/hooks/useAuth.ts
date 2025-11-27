@@ -35,12 +35,12 @@ export const useAuthHandler = () => {
 
 			setAccessToken(res.data.accessToken);
 			setUser(res.data.user);
-			localStorage.setItem("user", JSON.stringify(res.data.user));
-			localStorage.setItem(
+			sessionStorage.setItem("user", JSON.stringify(res.data.user));
+			sessionStorage.setItem(
 				"accessToken",
 				JSON.stringify(res.data.accessToken),
 			);
-			localStorage.setItem(
+			sessionStorage.setItem(
 				"refreshToken",
 				JSON.stringify(res.data.refreshToken),
 			);

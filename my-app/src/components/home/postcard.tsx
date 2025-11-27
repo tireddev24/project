@@ -1,24 +1,82 @@
 import Timedate from "@/reusable/timedate";
+import {useLikeStore} from "@/store/store";
 import {Avatar, Box, Button, HStack, Icon, Text} from "@chakra-ui/react";
+import {useEffect, useState} from "react";
 import {BsThreeDots} from "react-icons/bs";
+import {ChatBubbleOutline, Heart, HeartFilled, Share} from "../ui/icons";
+import {toaster} from "../ui/toaster";
 
 interface PostCardProps {
+	id: string;
 	name: string;
 	time: string;
 	text: string;
 	avatarUrl: string;
 	tags: any;
 	moodCategory?: string;
+	liked: boolean;
 }
 
 export default function PostCard({
+	id,
 	name,
 	time,
 	text,
 	avatarUrl,
 	moodCategory,
 	tags,
+	liked,
 }: PostCardProps) {
+	const {likes, fetchLikes} = useLikeStore();
+
+	useEffect(() => {
+		const data = async () => {
+			try {
+				const res = await fetchLikes(id);
+				// console.log(likes);
+			} catch (error) {
+				console.error(error);
+			} finally {
+				// setLoad(false);
+			}
+		};
+		setTimeout(() => {
+			data();
+		}, 300);
+	}, []);
+
+	const [like, setLike] = useState(false);
+
+	// console.log(likes);
+
+	// const {likePost, posts} = usePostStore();
+
+	const handleLike = async () => {
+		// const {success, message} = await likePost(id);
+
+		// success &&
+		setLike((prev) => !prev);
+
+		toaster.create({
+			type: "info",
+			closable: true,
+			description: `You liked ${name}'s post`,
+		});
+	};
+
+	const handleUnlike = async () => {
+		// const {success, message} = await likePost(id);
+
+		// success &&
+		setLike((prev) => !prev);
+
+		toaster.create({
+			type: "info",
+			closable: true,
+			description: `You unliked ${name}'s post`,
+		});
+	};
+
 	return (
 		<Box shadow={"md"} rounded={"md"} p={2}>
 			<div className="w-[550px] bg-white p-4 rounded-lg border-2 flex flex-col gap-3">
@@ -68,6 +126,23 @@ export default function PostCard({
 					</Text>
 				</Box>
 			</div>
+			<HStack mt={2} justify={"center"}>
+				<Button
+					variant={"ghost"}
+					onClick={like ? handleUnlike : handleLike}>
+					{like ? (
+						<HeartFilled fill="#f7d4e1" />
+					) : (
+						<Heart fill="#f7d4e1" />
+					)}
+				</Button>
+				<Button variant={"ghost"}>
+					<ChatBubbleOutline />
+				</Button>
+				<Button variant={"ghost"}>
+					<Share />
+				</Button>
+			</HStack>
 		</Box>
 	);
 }

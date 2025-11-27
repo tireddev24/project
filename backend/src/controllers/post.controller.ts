@@ -102,3 +102,28 @@ export const deletePost = async (req: Request, res: Response) => {
 		res.status(500).json({error: "Unable to delete post"});
 	}
 };
+
+// GET SINGLE POST
+export const getUsersPosts = async (req: Request, res: Response) => {
+	try {
+		const {userId} = req.params;
+
+		const post = await prisma.post.findMany({
+			where: {userId: userId},
+			include: {
+				user: true,
+				comments: true,
+				likes: true,
+				tags: {include: {tag: true}},
+			},
+		});
+
+		if (!post || post.length === 0)
+			return res.status(404).json({error: "This user has no posts"});
+
+		res.status(200).json(post);
+	} catch (error) {
+		console.error("Fetch post error:", error);
+		res.status(500).json({error: "Unable to fetch post"});
+	}
+};

@@ -20,13 +20,12 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
 	const logout = () => {
 		setAccessToken(null);
 		setUser(null);
-		localStorage.removeItem("user");
-		localStorage.removeItem("refreshToken");
-		localStorage.removeItem("accessToken");
+		sessionStorage.removeItem("user");
+		sessionStorage.removeItem("refreshToken");
+		sessionStorage.removeItem("accessToken");
 	};
 
-	const data = JSON.parse(localStorage.getItem("refreshToken") || "null");
-
+	const data = JSON.parse(sessionStorage.getItem("refreshToken") || "null");
 	useEffect(() => {
 		const init = async () => {
 			try {
@@ -35,7 +34,7 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
 					const res = await refreshToken({refreshToken: data});
 
 					setAccessToken(res.data.accessToken);
-					localStorage.setItem(
+					sessionStorage.setItem(
 						"accessToken",
 						JSON.stringify(res.data.accessToken),
 					);
@@ -49,7 +48,7 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
 	}, []);
 
 	useEffect(() => {
-		const savedUser = localStorage.getItem("user");
+		const savedUser = sessionStorage.getItem("user");
 		if (savedUser) setUser(JSON.parse(savedUser));
 	}, []);
 

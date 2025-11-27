@@ -104,7 +104,7 @@ export const getPostLikes = async (req: Request, res: Response) => {
 			},
 		});
 
-		return res.status(200).json(likes);
+		return res.status(200).json({likes, likesCount: likes.length});
 	} catch (error) {
 		console.error("Fetch likes error:", error);
 		res.status(500).json({error: "Unable to fetch likes"});
@@ -133,5 +133,20 @@ export const checkIfUserLiked = async (req: Request, res: Response) => {
 	} catch (error) {
 		console.error("Check like error:", error);
 		res.status(500).json({error: "Unable to check like status"});
+	}
+};
+
+export const getAllLikes = async (req: Request, res: Response) => {
+	try {
+		const likes = await prisma.like.findMany({
+			include: {
+				user: true,
+			},
+		});
+
+		return res.status(200).json({likes, likesCount: likes.length});
+	} catch (error) {
+		console.error("Fetch likes error:", error);
+		res.status(500).json({error: "Unable to fetch likes"});
 	}
 };
